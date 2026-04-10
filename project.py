@@ -117,17 +117,27 @@ class HotelBookingSystem:
                   f"{calendar[time]['102']:<18}"
                   f"{calendar[time]['201']:<18}")
 
+    # Goes through all bookings one by one to find a guest name
+    def find_booking_recursive(self, guest, index=0):
+        # base case: no more bookings left to check
+        if index >= len(self.bookings):
+            return False
+        b = self.bookings[index]
+        # check the current booking and print if it matches
+        found_here = False
+        if b["Guest"].title() == guest:
+            print(
+                f"{b['Guest'].title()} in Room {b['Room']} on {b['Day'].title()} at {b['Hour']}:00")
+            found_here = True
+        # check the next booking in the list
+        found_rest = self.find_booking_recursive(guest, index + 1)
+        return found_here or found_rest
+
     def find_booking(self):
         # gets input for guest name
         guest = input("Guest name: ").strip().title()
-        found = False
-        # if guest name is found the associated information is extracted
-        for b in self.bookings:
-            if b["Guest"] == guest:
-                found = True
-                # information is printed
-                print(
-                    f"{b['Guest'].title()} in Room {b['Room']} on {b['Day'].title()} at {b['Hour']}:00")
+        # Starts searching from the first booking in the list
+        found = self.find_booking_recursive(guest)
         if not found:
             print("No booking found.")
 
@@ -188,7 +198,7 @@ class HotelBookingSystem:
             print("Simple Hotel Booking\n"
                   "1) Add booking\n"
                   "2) Show day calendar\n"
-                  "3) Find booking by guest"
+                  "3) Find booking by guest\n"
                   "4) Cancel booking\n"
                   "5) Change booking\n"
                   "6) Exit")
