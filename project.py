@@ -141,7 +141,7 @@ class HotelBookingSystem:
 
     def cancel_booking(self):
         # asks for room number, day and hour
-        room = int(input("Room number (101/102/201): ").strip())
+        room = int(input("Room number: ").strip())
         day = self.normalize_day(input("Day (Monday-Saturday): "))
         hour = int(input("Hour (9-17): ").strip())
         row = 0
@@ -159,7 +159,7 @@ class HotelBookingSystem:
 
     def change_booking(self):
         # asks for guest name
-        guest = input("Guest name: ").strip().title()
+        guest = input("Guest name to change: ").strip().title()
         # finds booking via guest name
         for b in self.bookings:
             if b["Guest"].title() == guest:
