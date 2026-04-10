@@ -43,9 +43,8 @@ class HotelBookingSystem:
         if not os.path.exists(FILE_NAME):
             return
         # opens file, reads it then closes it
-        b = open(FILE_NAME, "r")
-        content = b.readlines()
-        b.close()
+        with open(FILE_NAME, "r") as b:
+            content = b.readlines()
         # skips the heading and strips and splits each row
         for row in content:
             if row.strip() == "":
