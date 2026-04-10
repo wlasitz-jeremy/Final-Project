@@ -71,7 +71,7 @@ class HotelBookingSystem:
 
     def add_booking(self):
         # gets input for the room number, day of booking, hour and guest name stripping of all white spaces and converting to title case
-        room = int(input("Room (101/102/201): ").strip())
+        room = int(input("Room number (101/102/201): ").strip())
         day = self.normalize_day(input("Day (Monday-Saturday): "))
         hour = int(input("Hour (9-17): ").strip())
         guest = input("Guest name: ").strip().title()
@@ -141,7 +141,7 @@ class HotelBookingSystem:
 
     def cancel_booking(self):
         # asks for room number, day and hour
-        room = int(input("Room (101/102/201): ").strip())
+        room = int(input("Room number (101/102/201): ").strip())
         day = self.normalize_day(input("Day (Monday-Saturday): "))
         hour = int(input("Hour (9-17): ").strip())
         row = 0
