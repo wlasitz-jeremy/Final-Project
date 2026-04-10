@@ -125,7 +125,7 @@ class HotelBookingSystem:
         found_here = False
         if b["Guest"].title() == guest:
             print(
-                f"{b['Guest'].title()} in Room {b['Room']} on {b['Day'].title()} at {b['Hour']}:00")
+                f"Found: {b['Guest'].title()} in Room {b['Room']} on {b['Day'].title()} at {b['Hour']}:00")
             found_here = True
         # check the next booking in the list
         found_rest = self.find_booking_recursive(guest, index + 1)
@@ -151,7 +151,7 @@ class HotelBookingSystem:
             if b["Room"] == room and b["Day"] == day and b["Hour"] == hour:
                 # removes booking from file
                 self.bookings.pop(row)
-                print("Booking cancelled.")
+                print("Cancelled.")
                 return
             row += 1
         # if no booking found prints not found
