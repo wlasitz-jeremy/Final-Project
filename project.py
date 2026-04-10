@@ -1,18 +1,20 @@
 import os
 
-VALID_DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+VALID_DAYS = ["Monday", "Tuesday", "Wednesday",
+              "Thursday", "Friday", "Saturday"]
 VALID_HOURS = range(9, 18)
-ROOMS = [101, 102, 201]
+ROOMS = {101, 102, 201}
 FILE_NAME = "hotel_bookings.csv"
 
 
 class HotelBookingSystem:
 
+    # Tracks total booking added during the session
+    booking_count = 0
 
     def __init__(self):
         self.bookings = []
         self.load_bookings(FILE_NAME)
-
 
     def __str__(self):
         # if csv file doesn't exist prints no loaded bookings
@@ -26,18 +28,15 @@ class HotelBookingSystem:
             )
         return "\n".join(lines)
 
-
     @staticmethod
     def normalize_day(day):
         # removes white spaces and converts to title case
         return day.strip().title()
 
-
     def slot_key(self, day, room, hour):
         # standardizes the file format
         day = self.normalize_day(day)
         return day, room, hour
-
 
     def load_bookings(self, FILE_NAME):
         # creates the file if it does not exist
@@ -61,7 +60,6 @@ class HotelBookingSystem:
                 "Hour": int(hour),
                 "Guest": guest})
 
-
     def save_bookings(self):
         # opens file and writes the information into the file
         b = open(FILE_NAME, "w")
@@ -72,7 +70,6 @@ class HotelBookingSystem:
             b.write(line + "\n")
         b.close()
         print("Saved. Goodbye.")
-
 
     def add_booking(self):
         # gets input for the room number, day of booking, hour and guest name stripping of all white spaces and converting to title case
@@ -91,10 +88,11 @@ class HotelBookingSystem:
             if self.slot_key(b["Day"], b["Room"], b["Hour"]) == new_key:
                 print("Could not add booking.")
                 return
-        # otherwise adds booking to the file
-        self.bookings.append({"Day":day, "Room":room, "Hour":hour, "Guest":guest})
+        # otherwise adds booking to the file and and increments the static counter
+        self.bookings.append(
+            {"Day": day, "Room": room, "Hour": hour, "Guest": guest})
+        HotelBookingSystem.booking_count += 1
         print("Booking added.")
-
 
     def print_day_calendar(self, day):
         # sets variables
@@ -102,7 +100,7 @@ class HotelBookingSystem:
         times = [f"{h}:00" for h in range(9, 18)]
         rooms = ["101", "102", "201"]
         # creates empty calendar
-        calendar = {time:{room: "empty" for room in rooms}for time in times}
+        calendar = {time: {room: "empty" for room in rooms}for time in times}
         # adds bookings for that day in the correct places
         for b in self.bookings:
             if b["Day"] == day:
@@ -119,7 +117,6 @@ class HotelBookingSystem:
                   f"{calendar[time]['102']:<18}"
                   f"{calendar[time]['201']:<18}")
 
-
     def find_booking(self):
         # gets input for guest name
         guest = input("Guest name: ").strip().title()
@@ -129,10 +126,10 @@ class HotelBookingSystem:
             if b["Guest"] == guest:
                 found = True
                 # information is printed
-                print(f"{b['Guest'].title()} in Room {b['Room']} on {b['Day'].title()} at {b['Hour']}:00")
+                print(
+                    f"{b['Guest'].title()} in Room {b['Room']} on {b['Day'].title()} at {b['Hour']}:00")
         if not found:
             print("No booking found.")
-
 
     def cancel_booking(self):
         # asks for room number, day and hour
@@ -152,7 +149,6 @@ class HotelBookingSystem:
         # if no booking found prints not found
         print("No booking found.")
 
-
     def change_booking(self):
         # asks for guest name
         guest = input("Guest name: ").strip().title()
@@ -171,7 +167,7 @@ class HotelBookingSystem:
                 new_booking = self.slot_key(new_day, new_room, new_hour)
                 # if new booking is equal to existing booking prints can not change booking
                 for nb in self.bookings:
-                    if nb ==b:
+                    if nb == b:
                         continue
                     if self.slot_key(nb["Day"], nb["Room"], nb["Hour"]) == new_booking:
                         print("Could not change booking.")
@@ -183,7 +179,6 @@ class HotelBookingSystem:
                 print("Booking changed.")
                 return
         print("No booking found.")
-
 
     def main(self):
         while True:
@@ -215,6 +210,7 @@ class HotelBookingSystem:
                 break
             else:
                 print("Invalid option.")
+
 
 HBS = HotelBookingSystem()
 HBS.main()
