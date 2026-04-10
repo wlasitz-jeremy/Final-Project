@@ -61,13 +61,12 @@ class HotelBookingSystem:
 
     def save_bookings(self):
         # opens file and writes the information into the file
-        b = open(FILE_NAME, "w")
-        b.write("Day,Room,Hour,Guest\n")
-        # writes the information into the file in the correct format adding a new line before closing it
-        for booking in self.bookings:
-            line = f"{booking['Day']},{booking['Room']},{booking['Hour']},{booking['Guest']}"
-            b.write(line + "\n")
-        b.close()
+        with open(FILE_NAME, "w") as b:
+            b.write("Day,Room,Hour,Guest\n")
+            # writes the information into the file in the correct format adding a new line before closing it
+            for booking in self.bookings:
+                line = f"{booking['Day']},{booking['Room']},{booking['Hour']},{booking['Guest']}"
+                b.write(line + "\n")
         print("Saved. Goodbye.")
 
     def add_booking(self):
