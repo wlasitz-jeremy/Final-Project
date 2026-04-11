@@ -100,29 +100,29 @@ class HotelBookingSystem:
             writer.writerows(rows)
         print ('Booking added\n')
 
-    def print_day_calendar(bookings, day):
-        print("\n=== " + day + " Calendar ===")
+    def print_day_calendar(self, day):
+        # sets variables
+        day = self.normalize_day(day)
+        times = [f"{h}:00" for h in range(9, 18)]
+        rooms = ["101", "102", "201"]
+        # creates empty calendar
+        calendar = {time:{room: "empty" for room in rooms}for time in times}
+        # adds bookings for that day in the correct places
+        for b in self.bookings:
+            if b["Day"] == day:
+                time = f"{b['Hour']}:00"
+                room = str(b["Room"])
+                calendar[time][room] = b["Guest"]
+        # prints calendar header and rows in proper format
+        print()
+        print(f"=== {day} Calender ===")
+        print(f"{'Time':<15}{'101':<18}{'102':<18}{'201':<18}")
+        for time in times:
+            print(f"{time:<15}"
+                  f"{calendar[time]['101']:<18}"
+                  f"{calendar[time]['102']:<18}"
+                  f"{calendar[time]['201']:<18}")
 
-        print("Time\t101\t102\t201")
-
-        #Creating the formatting
-        for hour in VALID_HOURS:
-            print(str(hour) + ":00  ", end="\t")
-
-            for room in ROOMS:
-                #If there are no guests, set their names as Empty to show there is no booking
-                guest = "Empty"
-
-                #If there is any booking then it will update the calendar for which room and what hour it is booked
-                for b in bookings:
-                    if b[0] == str(room) and b[1].strip() == day and b[2] == str(hour):
-                        #If the conditions are met above, then itll update guest and change it to the booked name
-                        guest = b[3]
-
-            print(guest, end="\t")
-
-            print()
-        print('\n')
 
     # Goes through all bookings one by one to find a guest name
     def find_booking_recursive(self, guest, index=0):
