@@ -79,8 +79,8 @@ class HotelBookingSystem:
 
         rows = []
     
-        if os.path.exists('hotel_booking.csv'):
-            with open('hotel_booking.csv','r') as file:
+        if os.path.exists('hotel_bookings.csv'):
+            with open('hotel_bookings.csv','r') as file:
                 reader = csv.reader(file)
                 for r in reader:
                     rows.append(r) 
@@ -95,7 +95,7 @@ class HotelBookingSystem:
         rows.append([room,day,hour,guest])
 
     #Create the booking
-        with open('hotel_booking.csv', 'w', newline='') as file:
+        with open('hotel_bookings.csv', 'w', newline='') as file:
             writer = csv.writer(file)
             writer.writerows(rows)
         print ('Booking added\n')
