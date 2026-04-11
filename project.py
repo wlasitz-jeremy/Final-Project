@@ -69,28 +69,35 @@ class HotelBookingSystem:
                 b.write(line + "\n")
         print("Saved. Goodbye.")
 
-    def add_booking(self):
-        # gets input for the room number, day of booking, hour and guest name stripping of all white spaces and converting to title case
-        room = int(input("Room number (101/102/201): ").strip())
-        day = self.normalize_day(input("Day (Monday-Saturday): "))
-        hour = int(input("Hour (9-17): ").strip())
-        guest = input("Guest name: ").strip().title()
-        # if inputs are not valid prints can not add booking
-        if room not in ROOMS or day not in VALID_DAYS or hour not in VALID_HOURS or guest == "":
-            print("Could not add booking.")
+    def add_booking():
+    #Ask for information
+    room = input('Room Number (101/102/201): ').strip()
+    day = input('Day (Monday-Saturday): ').capitalize().strip()
+    hour = input('Hour (9-17): ').strip()
+    guest = input('Guest Name: ').strip().capitalize()
+
+    rows = []
+    
+    if os.path.exists('hotel_booking.csv'):
+        with open('hotel_booking.csv','r') as file:
+            reader = csv.reader(file)
+            for r in reader:
+                rows.append(r) 
+
+    #Checking for duplicates
+    for r in rows:
+        if r[0] == room and r[1] == day and r[2] == hour:
+            print('Could not add booking\n')
             return
-        # new booking in same format as the slot key
-        new_key = self.slot_key(day, room, hour)
-        # if that certain slot is already filled prints can not add booking
-        for b in self.bookings:
-            if self.slot_key(b["Day"], b["Room"], b["Hour"]) == new_key:
-                print("Could not add booking.")
-                return
-        # otherwise adds booking to the file and and increments the static counter
-        self.bookings.append(
-            {"Day": day, "Room": room, "Hour": hour, "Guest": guest})
-        HotelBookingSystem.booking_count += 1
-        print("Booking added.")
+        
+    #Add booking
+    rows.append([room,day,hour,guest])
+
+    #Create the booking
+    with open('hotel_booking.csv', 'w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerows(rows)
+    print ('Booking added\n')
 
     def print_day_calendar(self, day):
         # sets variables
