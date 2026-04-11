@@ -70,7 +70,7 @@ class HotelBookingSystem:
                 b.write(line + "\n")
         print("Saved. Goodbye.")
 
-    def add_booking():
+    def add_booking(self):
         #Ask for information
         room = input('Room Number (101/102/201): ').strip()
         day = input('Day (Monday-Saturday): ').capitalize().strip()
