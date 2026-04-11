@@ -1,4 +1,5 @@
 import os
+import csv
 
 VALID_DAYS = ["Monday", "Tuesday", "Wednesday",
               "Thursday", "Friday", "Saturday"]
@@ -70,57 +71,58 @@ class HotelBookingSystem:
         print("Saved. Goodbye.")
 
     def add_booking():
-    #Ask for information
-    room = input('Room Number (101/102/201): ').strip()
-    day = input('Day (Monday-Saturday): ').capitalize().strip()
-    hour = input('Hour (9-17): ').strip()
-    guest = input('Guest Name: ').strip().capitalize()
+        #Ask for information
+        room = input('Room Number (101/102/201): ').strip()
+        day = input('Day (Monday-Saturday): ').capitalize().strip()
+        hour = input('Hour (9-17): ').strip()
+        guest = input('Guest Name: ').strip().capitalize()
 
-    rows = []
+        rows = []
     
-    if os.path.exists('hotel_booking.csv'):
-        with open('hotel_booking.csv','r') as file:
-            reader = csv.reader(file)
-            for r in reader:
-                rows.append(r) 
+        if os.path.exists('hotel_booking.csv'):
+            with open('hotel_booking.csv','r') as file:
+                reader = csv.reader(file)
+                for r in reader:
+                    rows.append(r) 
 
-    #Checking for duplicates
-    for r in rows:
-        if r[0] == room and r[1] == day and r[2] == hour:
-            print('Could not add booking\n')
-            return
+        #Checking for duplicates
+        for r in rows:
+            if r[0] == room and r[1] == day and r[2] == hour:
+                print('Could not add booking\n')
+                return
         
-    #Add booking
-    rows.append([room,day,hour,guest])
+        #Add booking
+        rows.append([room,day,hour,guest])
 
     #Create the booking
-    with open('hotel_booking.csv', 'w', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerows(rows)
-    print ('Booking added\n')
+        with open('hotel_booking.csv', 'w', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerows(rows)
+        print ('Booking added\n')
 
-    def print_day_calendar(self, day):
-        # sets variables
-        day = self.normalize_day(day)
-        times = [f"{h}:00" for h in range(9, 18)]
-        rooms = ["101", "102", "201"]
-        # creates empty calendar
-        calendar = {time: {room: "empty" for room in rooms}for time in times}
-        # adds bookings for that day in the correct places
-        for b in self.bookings:
-            if b["Day"] == day:
-                time = f"{b['Hour']}:00"
-                room = str(b["Room"])
-                calendar[time][room] = b["Guest"]
-        # prints calendar header and rows in proper format
-        print()
-        print(f"=== {day} Calender ===")
-        print(f"{'Time':<15}{'101':<18}{'102':<18}{'201':<18}")
-        for time in times:
-            print(f"{time:<15}"
-                  f"{calendar[time]['101']:<18}"
-                  f"{calendar[time]['102']:<18}"
-                  f"{calendar[time]['201']:<18}")
+    def print_day_calendar(bookings, day):
+        print("\n=== " + day + " Calendar ===")
+
+        print("Time\t101\t102\t201")
+
+        #Creating the formatting
+        for hour in VALID_HOURS:
+            print(str(hour) + ":00  ", end="\t")
+
+            for room in ROOMS:
+                #If there are no guests, set their names as Empty to show there is no booking
+                guest = "Empty"
+
+                #If there is any booking then it will update the calendar for which room and what hour it is booked
+                for b in bookings:
+                    if b[0] == str(room) and b[1].strip() == day and b[2] == str(hour):
+                        #If the conditions are met above, then itll update guest and change it to the booked name
+                        guest = b[3]
+
+            print(guest, end="\t")
+
+            print()
+        print('\n')
 
     # Goes through all bookings one by one to find a guest name
     def find_booking_recursive(self, guest, index=0):
