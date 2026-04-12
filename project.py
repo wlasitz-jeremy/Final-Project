@@ -1,21 +1,20 @@
 import os
-import csv
 
-VALID_DAYS = ["Monday", "Tuesday", "Wednesday",
-              "Thursday", "Friday", "Saturday"]
+VALID_DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 VALID_HOURS = range(9, 18)
 ROOMS = {101, 102, 201}
 FILE_NAME = "hotel_bookings.csv"
-
 
 class HotelBookingSystem:
 
     # Tracks total booking added during the session
     booking_count = 0
 
+
     def __init__(self):
         self.bookings = []
         self.load_bookings(FILE_NAME)
+
 
     def __str__(self):
         # if csv file doesn't exist prints no loaded bookings
@@ -29,15 +28,18 @@ class HotelBookingSystem:
             )
         return "\n".join(lines)
 
+
     @staticmethod
     def normalize_day(day):
         # removes white spaces and converts to title case
         return day.strip().title()
 
+
     def slot_key(self, day, room, hour):
         # standardizes the file format
         day = self.normalize_day(day)
         return day, room, hour
+
 
     def load_bookings(self, FILE_NAME):
         # creates the file if it does not exist
@@ -60,6 +62,7 @@ class HotelBookingSystem:
                 "Hour": int(hour),
                 "Guest": guest})
 
+
     def save_bookings(self):
         # opens file and writes the information into the file
         with open(FILE_NAME, "w") as b:
@@ -70,35 +73,29 @@ class HotelBookingSystem:
                 b.write(line + "\n")
         print("Saved. Goodbye.")
 
+
     def add_booking(self):
-        #Ask for information
-        room = input('Room Number (101/102/201): ').strip()
-        day = input('Day (Monday-Saturday): ').capitalize().strip()
-        hour = input('Hour (9-17): ').strip()
-        guest = input('Guest Name: ').strip().capitalize()
-
-        rows = []
-    
-        if os.path.exists('hotel_bookings.csv'):
-            with open('hotel_bookings.csv','r') as file:
-                reader = csv.reader(file)
-                for r in reader:
-                    rows.append(r) 
-
-        #Checking for duplicates
-        for r in rows:
-            if r[0] == room and r[1] == day and r[2] == hour:
-                print('Could not add booking\n')
+        # gets input for the room number, day of booking, hour and guest name stripping of all white spaces and converting to title case
+        room = int(input("Room (101/102/201): ").strip())
+        day = self.normalize_day(input("Day (Monday-Saturday): "))
+        hour = int(input("Hour (9-17): ").strip())
+        guest = input("Guest name: ").strip().title()
+        # if inputs are not valid prints can not add booking
+        if room not in ROOMS or day not in VALID_DAYS or hour not in VALID_HOURS or guest == "":
+            print("Could not add booking.")
+            return
+        # new booking in same format as the slot key
+        new_key = self.slot_key(day, room, hour)
+        # if that certain slot is already filled prints can not add booking
+        for b in self.bookings:
+            if self.slot_key(b["Day"], b["Room"], b["Hour"]) == new_key:
+                print("Could not add booking.")
                 return
-        
-        #Add booking
-        rows.append([room,day,hour,guest])
+        # otherwise adds booking to the file
+        self.bookings.append({"Day":day, "Room":room, "Hour":hour, "Guest":guest})
+        HotelBookingSystem.booking_count += 1
+        print("Booking added.")
 
-    #Create the booking
-        with open('hotel_bookings.csv', 'w', newline='') as file:
-            writer = csv.writer(file)
-            writer.writerows(rows)
-        print ('Booking added\n')
 
     def print_day_calendar(self, day):
         # sets variables
@@ -140,6 +137,7 @@ class HotelBookingSystem:
         found_rest = self.find_booking_recursive(guest, index + 1)
         return found_here or found_rest
 
+
     def find_booking(self):
         # gets input for guest name
         guest = input("Guest name: ").strip().title()
@@ -147,6 +145,7 @@ class HotelBookingSystem:
         found = self.find_booking_recursive(guest)
         if not found:
             print("No booking found.")
+
 
     def cancel_booking(self):
         # asks for room number, day and hour
@@ -165,6 +164,7 @@ class HotelBookingSystem:
             row += 1
         # if no booking found prints not found
         print("No booking found.")
+
 
     def change_booking(self):
         # asks for guest name
@@ -196,6 +196,7 @@ class HotelBookingSystem:
                 print("Booking changed.")
                 return
         print("No booking found.")
+
 
     def main(self):
         while True:
